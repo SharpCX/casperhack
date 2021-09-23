@@ -104,6 +104,40 @@ npm run start:atomic
 ![img_16.png](img_16.png)
 
 #### Signing transactions with a single key
+
+Change the code like below
+```javascript
+    let masterKey = keyManager.randomMasterKey();
+    let mainAccount = masterKey.deriveIndex(1);
+
+    console.log("\n0.1 Fund main account.\n");
+    await keyManager.fundAccount(mainAccount);
+    await keyManager.printAccount(mainAccount);
+    
+    console.log("\n[x]0.2 Install Keys Manager contract");
+    deploy = keyManager.keys.buildContractInstallDeploy(mainAccount);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
+
+    // 1. Set mainAccount's weight to 1
+    console.log("\n1. Set faucet's weight to 1\n");
+    deploy = keyManager.keys.setKeyWeightDeploy(mainAccount, mainAccount, 1);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
+    
+    // 2. Set Keys Management Threshold to 1.
+    console.log("\n2. Set Keys Management Threshold to 1\n");
+    deploy = keyManager.keys.setKeyManagementThresholdDeploy(mainAccount, 1);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
+    
+    // 3. Set Deploy Threshold to 1.
+    console.log("\n3. Set Deploy Threshold to 1.\n");
+    deploy = keyManager.keys.setDeploymentThresholdDeploy(mainAccount, 1);
+    await keyManager.sendDeploy(deploy, [mainAccount]);
+    await keyManager.printAccount(mainAccount);
+```
+
 ![img_17.png](img_17.png)
 ![img_18.png](img_18.png)
 
